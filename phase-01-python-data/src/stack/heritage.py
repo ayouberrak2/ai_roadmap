@@ -100,3 +100,160 @@ print(isinstance(student, User)) # aussi True
 # issubclass() vérifie une relation entre deux classes
 print(issubclass(Student, User)) # True
 
+
+# ================================
+# Héritage et attributs publics
+# ================================
+
+
+class User:
+    def __init__(self, name: str) -> None:
+        self.name = name
+
+class Student(User):
+    def display_name(self) -> None:
+        print(self.name)
+
+
+# ================================
+# Héritage et attributs protégés
+# ================================
+
+class User:
+    def __init__(self, email: str) -> None:
+        self._email = email
+
+class Student(User):
+    def display_email(self) -> None:
+        print(self._email)
+
+# ========================
+# Héritage et attributs privee
+# ================================
+
+class User:
+    def __init__(self, password: str) -> None:
+        self.__password = password
+
+
+class Student(User):
+    def display_password(self) -> None:
+        print(self.__password) # error
+
+#  car dans user passord se transfome a self._User__password et dans student il se transforma a self._Student__password
+
+# bonne exemple :
+class User:
+    def __init__(self, password: str) -> None:
+        self.__password = password
+
+    def check_password(self, password: str) -> bool:
+        return self.__password == password
+    
+class Student(User):
+    def authenticate(self, password: str) -> None:
+        if self.check_password(password):
+            print("Mot de passe correct")
+        else:
+            print("Mot de passe incorrect")
+
+
+# ===========================
+# Chaîne d’héritage
+# ==========================
+
+class User:
+    def login(self) -> None:
+        print("Connexion")
+
+
+class Employee(User):
+    def work(self) -> None:
+        print("Travail")
+
+
+class Manager(Employee):
+    def manage_team(self) -> None:
+        print("Gestion de l'équipe")
+
+manager = Manager() # est user et employe 
+
+manager.login()
+manager.work()
+manager.manage_team()
+
+
+# =============================
+# Héritage multiple
+# ======================
+class Logger:
+    def log(self, message: str) -> None:
+        print(f"LOG : {message}")
+
+
+class Serializable:
+    def serialize(self) -> str:
+        return "Objet sérialisé"
+
+
+class User(Logger, Serializable):
+    pass
+
+
+user = User()
+
+user.log("Utilisateur créé")
+print(user.serialize())
+
+
+
+# Problème !!!!!!!!!!!!!!!!!!!!!
+# exemple
+class ParentA:
+    def display(self) -> None:
+        print("Parent A")
+
+
+class ParentB:
+    def display(self) -> None:
+        print("Parent B")
+
+
+class Child(ParentA, ParentB):
+    pass
+
+
+child = Child()
+child.display() # cette method de class Parent a
+
+# Python suit un ordre appelé : MRO — Method Resolution Order
+
+print(Child.mro()) 
+
+# result :
+# Child
+# ParentA
+# ParentB
+# object
+
+# ====================
+# Classes abstraites
+# =======================
+
+from abc import ABC , abstractmethod
+
+class PredictionModel(ABC):
+    @abstractmethod
+    def predict(self, value: float) -> float:
+        pass
+
+class LinearModel(PredictionModel):
+    def predict(self, value: float) -> float:
+        return value * 2
+    
+model = LinearModel()
+
+print(model.predict(10))
+
+model = PredictionModel() #error
+
